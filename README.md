@@ -30,8 +30,8 @@ Proyek ini merupakan implementasi model DETR (DEtection TRansformer) untuk tugas
 ## Instalasi
 1. Clone repositori ini:
 ```bash
-git clone [URL_REPOSITORI]
-cd [NAMA_DIR]
+git clone [[URL_REPOSITORI]](https://github.com/AndiDemon-Lab/HazardDetection)
+cd HazarDetection
 ```
 
 2. Buat virtual environment (direkomendasikan):
