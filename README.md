@@ -1,96 +1,135 @@
+# Implementasi DETR (DEtection TRansformer) untuk Deteksi Objek
 
-# Fire and Smoke Detection with DETR
+## Abstrak
+Proyek ini merupakan implementasi model DETR (DEtection TRansformer) untuk tugas deteksi objek. DETR adalah arsitektur end-to-end yang menggabungkan Transformer dengan CNN untuk tugas deteksi objek, menghilangkan kebutuhan akan komponen khusus seperti non-maximum suppression (NMS) dan anchor generation. Proyek ini juga mengeksplorasi penggunaan dilation layer pada backbone ResNet untuk meningkatkan performa deteksi.
 
-This repository provides an implementation for training an object detection model using the DETR (DEtection TRansformers) architecture with custom backbones and dataset integration. The implementation is based on PyTorch Lightning for efficient training and logging.
-
-## Project Structure
-
+## Struktur Proyek
 ```
-├── config.py               # Configuration settings (paths, model parameters, etc.)
-├── train.py                # Main training script
-├── train_r50.py            # Training script with ResNet50 backbone (Normal Configuration)
-├── train_r50_3_4.py        # Training script with ResNet50 backbone (DC Layer 3-4)
-├── train_r50_4.py          # Training script with ResNet50 backbone (DC Layer 1-4)
-├── train_r101.py           # Training script with ResNet101 backbone (Normal Configuration)
-├── train_r101_3_4.py       # Training script with ResNet101 backbone (DC Layer 3-4)
-├── train_r101_4.py         # Training script with ResNet101 backbone (DC Layer 1-4)
-├── train_r50_1_4.py        # Training script with ResNet50 backbone (DC Layer 1-4)
-├── testing.py              # Testing Script for evaluation
-├── data/
-│   ├── dataset.py          # Dataset handler for COCO-style datasets
-├── utils/
-│   ├── helpers.py          # Helper functions for data processing and utility
-├── logging_config.py       # Logging configurations
+.
+├── data/               # Direktori untuk dataset dan preprocessing
+├── utils/             # Utilitas dan helper functions
+├── config.py          # Konfigurasi model dan training
+├── train.py           # Script training utama
+├── train_r50.py       # Training dengan ResNet-50 backbone (tanpa dilation)
+├── train_r50_1_4.py   # Training dengan ResNet-50 + DC Layer 1-4
+├── train_r50_3_4.py   # Training dengan ResNet-50 + DC Layer 3-4
+├── train_r50_4.py     # Training dengan ResNet-50 + DC Layer 4
+├── train_r101.py      # Training dengan ResNet-101 backbone (tanpa dilation)
+├── train_r101_1_4.py  # Training dengan ResNet-101 + DC Layer 1-4
+├── train_r101_3_4.py  # Training dengan ResNet-101 + DC Layer 3-4
+├── train_r101_4.py    # Training dengan ResNet-101 + DC Layer 4
+├── testing.py         # Script untuk evaluasi model
+└── requirements.txt   # Dependensi proyek
 ```
 
-## Requirements
+## Prasyarat
+- Python 3.8+
+- CUDA-compatible GPU (direkomendasikan)
+- Dependensi yang tercantum dalam `requirements.txt`
 
-Ensure you have the following dependencies installed:
+## Instalasi
+1. Clone repositori ini:
+```bash
+git clone [URL_REPOSITORI]
+cd [NAMA_DIR]
+```
 
-- Python 3.x
-- PyTorch
-- PyTorch Lightning
-- Hugging Face Transformers
-- Roboflow API (for dataset management)
-- Matplotlib
-- Pandas
-- NumPy
+2. Buat virtual environment (direkomendasikan):
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# atau
+.\venv\Scripts\activate  # Windows
+```
 
-You can install the necessary dependencies via pip:
-
+3. Install dependensi:
 ```bash
 pip install -r requirements.txt
 ```
 
-## Setup
+## Penggunaan
 
-1. **Download the Dataset:**
-   - Use the `Roboflow` API to download a custom dataset or use the pre-defined `COCO` dataset.
-   - The datasets are downloaded using the `Roboflow` API key. Replace the API key in `config.py` with your own.
+### Training Model
+Proyek ini menyediakan beberapa variasi model dengan konfigurasi dilation layer yang berbeda:
 
-2. **Configure Training Settings:**
-   - Set the appropriate model checkpoint, batch size, number of epochs, and other training parameters in the `config.py` file.
+#### ResNet-50 Backbone
+- Model dasar (tanpa dilation):
+```bash
+python train_r50.py
+```
+- Model dengan DC Layer 1-4:
+```bash
+python train_r50_1_4.py
+```
+- Model dengan DC Layer 3-4:
+```bash
+python train_r50_3_4.py
+```
+- Model dengan DC Layer 4:
+```bash
+python train_r50_4.py
+```
 
-3. **Modify the Model Backbone (Optional):**
-   - The model can use different backbones like `ResNet50` or `ResNet101`, depending on which script is used:
-     - `train_r50.py`: Normal configuration with ResNet50.
-     - `train_r50_1_4.py`: ResNet50 with DC Layer 1-4.
-     - `train_r50_3_4.py`: ResNet50 with DC Layer 3-4.
-     - `train_r101.py`: Normal configuration with ResNet101.
-     - `train_r101_1_4.py`: ResNet101 with DC Layer 1-4.
-     - `train_r101_3_4.py`: ResNet101 with DC Layer 3-4.
+#### ResNet-101 Backbone
+- Model dasar (tanpa dilation):
+```bash
+python train_r101.py
+```
+- Model dengan DC Layer 1-4:
+```bash
+python train_r101_1_4.py
+```
+- Model dengan DC Layer 3-4:
+```bash
+python train_r101_3_4.py
+```
+- Model dengan DC Layer 4:
+```bash
+python train_r101_4.py
+```
 
-## Training
+### Evaluasi Model
+Untuk mengevaluasi model yang telah dilatih:
+```bash
+python testing.py
+```
 
-1. **Run the training script:**
-   You can start the training using the following command, depending on the backbone and configuration you want to use:
+## Konfigurasi
+Parameter training dan model dapat dikonfigurasi dalam file `config.py`. Beberapa parameter penting:
+- `BATCH_SIZE`: Ukuran batch untuk training
+- `MAX_EPOCHS`: Jumlah epoch maksimum
+- `LEARNING_RATE`: Learning rate untuk optimizer
+- `NUM_WORKERS`: Jumlah worker untuk data loading
 
-   ```bash
-   python train_r50.py           # ResNet50 with normal configuration
-   python train_r50_3_4.py       # ResNet50 with DC Layer 3-4
-   python train_r50_1_4.py       # ResNet50 with DC Layer 1-4
-   python train_r101.py          # ResNet101 with normal configuration
-   python train_r101_3_4.py      # ResNet101 with DC Layer 3-4
-   python train_r101_1_4.py      # ResNet101 with DC Layer 1-4
-   ```
+## Variasi Model
+Proyek ini mengeksplorasi beberapa variasi model dengan konfigurasi dilation layer yang berbeda:
 
-2. **TensorBoard for Visualization:**
-   - TensorBoard logging is set up by default to track the training losses and metrics.
-   - The logs are stored in the `training_logs` directory and can be visualized using:
+1. **ResNet-50 Backbone**:
+   - Model dasar tanpa dilation layer
+   - Model dengan DC Layer 1-4 (dilation pada layer 1 sampai 4)
+   - Model dengan DC Layer 3-4 (dilation pada layer 3 dan 4)
+   - Model dengan DC Layer 4 (dilation hanya pada layer 4)
 
-   ```bash
-   tensorboard --logdir=training_logs
-   ```
+2. **ResNet-101 Backbone**:
+   - Model dasar tanpa dilation layer
+   - Model dengan DC Layer 1-4 (dilation pada layer 1 sampai 4)
+   - Model dengan DC Layer 3-4 (dilation pada layer 3 dan 4)
+   - Model dengan DC Layer 4 (dilation hanya pada layer 4)
 
-## Model Checkpoint
+Penggunaan dilation layer bertujuan untuk meningkatkan receptive field model tanpa meningkatkan jumlah parameter, sehingga dapat menangkap konteks yang lebih luas dalam gambar.
 
-- Once training completes, the model will be saved in the directory defined by `MODEL_PATH` in `config.py`.
+## Hasil
+Model ini menghasilkan output berupa bounding box dan class predictions untuk setiap objek dalam gambar. Metrik evaluasi yang digunakan:
+- Mean Average Precision (mAP)
+- Intersection over Union (IoU)
+- Classification accuracy
 
-## Notes
+## Referensi
+1. Carion, N., Massa, F., Synnaeve, G., Usunier, N., Kirillov, A., & Zagoruyko, S. (2020). End-to-End Object Detection with Transformers. In European Conference on Computer Vision (pp. 213-229).
+2. Yu, F., & Koltun, V. (2015). Multi-scale context aggregation by dilated convolutions. arXiv preprint arXiv:1511.07122.
 
-- The training scripts are designed for high-performance training on GPUs. Ensure that your system has CUDA enabled if you're training on GPU.
-- The scripts include visualization of loss values at the end of each epoch, allowing for better monitoring of training progress.
+## Lisensi
+[]
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Kontak
+[Hulwanul Azka Putra Pratama] - [hulwanulazkap@gmail.com] 
